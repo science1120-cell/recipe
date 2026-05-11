@@ -1,0 +1,1 @@
+{"error":"CommandError: Must specify \"expo-platform\" header or \"platform\" query parameter"}
