@@ -4,8 +4,8 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Body, PillButton, Screen } from '@/components/recipes-ui';
 import { Fonts } from '@/constants/theme';
-import { listRecipes } from '@/lib/recipes';
 import { useAuth } from '@/lib/auth';
+import { listRecipes } from '@/lib/recipes';
 import type { Recipe } from '@/lib/supabase';
 
 function ymd(d: Date) {
@@ -51,7 +51,7 @@ export default function CalendarTab() {
       </View>
 
       <View style={styles.weekRow}>
-        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d) => (
+        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
           <Text key={d} style={styles.weekText}>
             {d}
           </Text>
@@ -88,12 +88,12 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   dateCardText: { fontFamily: Fonts.serif, fontSize: 24, textAlign: 'center' },
-  hello: { fontFamily: Fonts.sans, fontSize: 24, lineHeight: 28 },
+  hello: { fontFamily: Fonts.sans, fontSize: 14, lineHeight: 28 },
   weekRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10, paddingHorizontal: 4 },
   weekText: { width: 38, textAlign: 'center', fontFamily: Fonts.serif, fontSize: 22 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 12 },
   cell: {
-    width: '13.5%',
+    width: '15%',
     aspectRatio: 1,
     backgroundColor: '#d8e0ea',
     borderRadius: 8,
