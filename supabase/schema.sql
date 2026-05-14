@@ -1,18 +1,18 @@
 -- Recipes Journal schema
--- Run in Supabase SQL editor.
+-- Run this in the Supabase SQL editor (https://supabase.com/dashboard)
 
 create table if not exists public.recipes (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
   name text not null,
   photo_url text,
-  ingredients text[] not null default '{}',
+  ingredients jsonb not null default '[]'::jsonb,
   steps text[] not null default '{}',
   collection_tag text not null default 'All',
   mood_emoji text,
-  cooked_on date not null default current_date,
+  date text not null default to_char(current_date, 'YYYY-MM-DD'),
   servings int not null default 1,
-  time_min int not null default 0,
+  time_minutes int not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -39,4 +39,3 @@ drop policy if exists "favorites_owner_all" on public.favorites;
 create policy "favorites_owner_all" on public.favorites
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
-

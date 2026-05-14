@@ -41,11 +41,11 @@ export default function FavoritesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#EDE1CC", paddingHorizontal: 24 },
-  title: { fontFamily: "IMFellDWPicaSC_400Regular", fontSize: 48, color: colors.textPrimary },
-  subtitle: { fontFamily: "Inter_400Regular", color: colors.textSecondary, fontSize: 16, marginTop: -6 },
-  searchWrap: { marginTop: 12, flexDirection: "row", backgroundColor: colors.card, borderRadius: 12, alignItems: "center", paddingLeft: 12 },
-  search: { flex: 1, backgroundColor: "transparent" },
+  container: { flex: 1, backgroundColor: "#F6F3EE", marginRight: 5, marginLeft: 5},
+  title: { fontFamily: "IMFellDWPicaSC_400Regular", fontSize: 48, color: colors.textPrimary, marginTop: 20},
+  subtitle: { fontFamily: "Inter_400Regular", color: colors.textSecondary, fontSize: 15, paddingLeft: 5},
+  searchWrap: { marginTop: 12, flexDirection: "row", backgroundColor: colors.card, borderRadius: 12, alignItems: "center", paddingLeft: 10},
+  search: { flex: 1, backgroundColor: "transparent", paddingLeft: 10},
   grid: { paddingVertical: 16, gap: 12, flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" },
   card: { width: "48%", backgroundColor: colors.card, borderRadius: 20, paddingBottom: 12, overflow: "hidden" },
   photo: { width: "100%", aspectRatio: 1 },

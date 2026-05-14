@@ -1,4 +1,5 @@
 import { AppProvider } from "@/context/AppContext";
+import { AuthProvider } from "@/lib/auth";
 import { colors } from "@/lib/theme";
 import { AlbertSans_400Regular, AlbertSans_600SemiBold, useFonts as useAlbertFonts } from "@expo-google-fonts/albert-sans";
 import { IMFellDWPicaSC_400Regular, useFonts as useFellFonts } from "@expo-google-fonts/im-fell-dw-pica-sc";
@@ -23,6 +24,7 @@ export default function RootLayout() {
   }
 
   return (
+    <AuthProvider>
     <AppProvider>
       <StatusBar style="dark" />
       <Stack screenOptions={{ headerShown: false }}>
@@ -32,5 +34,6 @@ export default function RootLayout() {
         <Stack.Screen name="recipe/[id]/edit" />
       </Stack>
     </AppProvider>
+    </AuthProvider>
   );
 }

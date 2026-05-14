@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { colors } from "@/lib/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
@@ -22,7 +23,7 @@ export default function TabsLayout() {
         tabBarStyle: {
           height: 92,
           borderTopWidth: 0,
-          backgroundColor: "#E5E1DA",
+          backgroundColor: Colors.light.background,
           position: "absolute"
         },
         tabBarIcon: ({ focused }) => {
@@ -54,6 +55,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="home" />
       <Tabs.Screen name="favorites" />
       <Tabs.Screen name="profile" />
+      <Tabs.Screen name="calendar" options={{ href: null }} />
     </Tabs>
   );
 }

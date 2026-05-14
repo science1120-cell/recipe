@@ -1,12 +1,12 @@
 import { useRouter } from 'expo-router';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Body, PillButton, Screen } from '@/components/recipes-ui';
 import { Fonts } from '@/constants/theme';
-import { useAuth } from '@/lib/auth';
+import { AuthContext } from '@/lib/auth';
 import { listRecipes } from '@/lib/recipes';
-import type { Recipe } from '@/lib/supabase';
+import type { Recipe } from '@/lib/types';
 
 function ymd(d: Date) {
   return d.toISOString().slice(0, 10);
@@ -14,7 +14,9 @@ function ymd(d: Date) {
 
 export default function CalendarTab() {
   const router = useRouter();
-  const { user, isDemoMode } = useAuth();
+  const auth = useContext(AuthContext);
+  const user = auth?.user ?? null;
+  const isDemoMode = auth?.isDemoMode ?? true;
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const today = new Date();
 
@@ -25,7 +27,7 @@ export default function CalendarTab() {
 
   const mapByDate = useMemo(() => {
     const m = new Map<string, Recipe[]>();
-    recipes.forEach((r) => m.set(r.cooked_on, [...(m.get(r.cooked_on) ?? []), r]));
+    recipes.forEach((r) => m.set(r.date, [...(m.get(r.date) ?? []), r]));
     return m;
   }, [recipes]);
 
@@ -93,7 +95,7 @@ const styles = StyleSheet.create({
   weekText: { width: 38, textAlign: 'center', fontFamily: Fonts.serif, fontSize: 22 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 12 },
   cell: {
-    width: '15%',
+    width: '13.5%',
     aspectRatio: 1,
     backgroundColor: '#d8e0ea',
     borderRadius: 8,

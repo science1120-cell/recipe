@@ -57,16 +57,16 @@ export default function RecipeDetailScreen() {
           </View>
         ))}
         <Text style={styles.edited}>Edited {new Date(recipe.updated_at).toLocaleDateString("en", { month: "short", day: "numeric" })}</Text>
+        <View style={styles.bottom}>
+          <PillButton label="Edit" fullWidth onPress={() => router.push(`/recipe/${recipe.id}/edit`)} />
+        </View>
       </ScrollView>
-      <View style={styles.bottom}>
-        <PillButton label="Edit" fullWidth onPress={() => router.push(`/recipe/${recipe.id}/edit`)} />
-      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#EDE1CC", paddingHorizontal: 24 },
+  container: { flex: 1, backgroundColor: "#F6F3EE", marginLeft: 5, marginRight: 5 },
   top: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   back: { fontFamily: "AlbertSans_600SemiBold", color: colors.textPrimary },
   photo: { width: "100%", height: 250, borderRadius: 20, marginTop: 12 },
@@ -82,5 +82,5 @@ const styles = StyleSheet.create({
   markerText: { color: colors.white, fontFamily: "Inter_600SemiBold" },
   stepText: { flex: 1, fontFamily: "AlbertSans_400Regular", color: colors.textPrimary, lineHeight: 22 },
   edited: { marginTop: 12, fontFamily: "Inter_400Regular", color: colors.textSecondary, fontStyle: "italic" },
-  bottom: { position: "absolute", left: 24, right: 24, bottom: 18 }
+  bottom: { marginTop: 25, marginBottom: 32, alignSelf: "center" }
 });

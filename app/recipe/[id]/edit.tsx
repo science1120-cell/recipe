@@ -1,9 +1,10 @@
 import { Chip, PillButton, SoftInput } from "@/components/ui";
 import { useAppStore } from "@/context/AppContext";
-import { CollectionTag, IngredientItem, MoodEmoji } from "@/lib/types";
+import { BlurView } from "expo-blur";
 import { colors } from "@/lib/theme";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { CollectionTag, IngredientItem, MoodEmoji } from "@/lib/types";
 import * as ImagePicker from "expo-image-picker";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
 import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 
@@ -24,7 +25,8 @@ export default function EditRecipeScreen() {
   const [steps, setSteps] = useState((existing?.steps ?? [""]).join("\n"));
   const [collection, setCollection] = useState<CollectionTag>(existing?.collection_tag ?? "All");
   const [saved, setSaved] = useState(false);
-  const dateLabel = new Date().toLocaleDateString("en", { month: "short", day: "numeric" });
+  const dateMonth = new Date().toLocaleString("en", { month: "short" });
+  const dateDay = new Date().getDate();
 
   const pick = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -43,7 +45,10 @@ export default function EditRecipeScreen() {
           {photoUrl ? <Image source={{ uri: photoUrl }} style={styles.uploaded} /> : <Text style={styles.uploadText}>Upload photo</Text>}
         </Pressable>
         <View style={styles.row}>
-          <View style={styles.date}><Text style={styles.dateText}>📅 {dateLabel}</Text></View>
+          <View style={styles.dateCard}>
+            <Text style={styles.dateMonth}>{dateMonth}</Text>
+            <Text style={styles.dateDay}>{dateDay}</Text>
+          </View>
           <View style={{ flexDirection: "row", gap: 8 }}>
             {moods.map((m) => (
               <Pressable
@@ -61,9 +66,9 @@ export default function EditRecipeScreen() {
           <SoftInput placeholder="Servings" value={servings} onChangeText={setServings} keyboardType="numeric" style={styles.flex} />
           <SoftInput placeholder="Time (min)" value={time} onChangeText={setTime} keyboardType="numeric" style={styles.flex} />
         </View>
-        <Text style={styles.section}>Ingredients</Text>
+        <Text style={[styles.section, { paddingLeft: 5 }]}>Ingredients</Text>
         {ingredients.map((item, idx) => (
-          <View key={`${idx}_${item.name}`} style={styles.row}>
+          <View key={idx} style={styles.row}>
             <SoftInput
               placeholder="Ingredient name"
               value={item.name}
@@ -81,14 +86,13 @@ export default function EditRecipeScreen() {
         <Pressable style={styles.addRow} onPress={() => setIngredients((p) => [...p, { name: "", amount: "" }])}>
           <Text style={styles.addText}>+ Add more rows</Text>
         </Pressable>
-        <Text style={styles.section}>Collection</Text>
+        <Text style={[styles.section, { paddingLeft: 5 }]}>Collection</Text>
         <View style={styles.collections}>
           {collections.map((item) => <Chip key={item} label={item} active={collection === item} onPress={() => setCollection(item)} />)}
         </View>
-        <Text style={styles.section}>Steps</Text>
-        <SoftInput placeholder={"One step per line"} value={steps} onChangeText={setSteps} multiline style={{ minHeight: 120, textAlignVertical: "top" }} />
-      </ScrollView>
-      <View style={styles.bottom}>
+        <Text style={[styles.section, { paddingLeft: 5 }]}>Steps</Text>
+        <SoftInput placeholder={"One step per line"} value={steps} onChangeText={setSteps} multiline style={{ marginTop: 12, minHeight: 120, textAlignVertical: "top"}} />
+        <View style={styles.bottom}>
         <PillButton
           label="Save Recipe"
           fullWidth
@@ -102,7 +106,7 @@ export default function EditRecipeScreen() {
               steps: steps.split("\n").map((s) => s.trim()).filter(Boolean),
               collection_tag: collection,
               mood_emoji: mood,
-              date: new Date().toISOString().slice(0, 10),
+              date: (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; })(),
               servings: Number(servings) || 1,
               time_minutes: Number(time) || 10
             });
@@ -110,10 +114,13 @@ export default function EditRecipeScreen() {
             setTimeout(() => router.replace("/(tabs)/recipes"), 1000);
           }}
         />
-      </View>
+        </View>
+      </ScrollView>
       {saved && (
-        <View style={styles.overlay}>
-          <Text style={styles.congrats}>CONGRATS 🎉{"\n"}YOUR RECIPE HAS BEEN SAVED.</Text>
+        <View style={styles.overlayWrap}>
+          <BlurView intensity={60} tint="light" style={styles.overlay}>
+            <Text style={styles.congrats}>CONGRATS 🎉{"\n"}YOUR RECIPE{"\n"}HAS BEEN SAVED.</Text>
+          </BlurView>
         </View>
       )}
     </SafeAreaView>
@@ -121,21 +128,38 @@ export default function EditRecipeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#EDE1CC", paddingHorizontal: 24 },
+  container: { flex: 1, backgroundColor: "#F6F3EE", paddingHorizontal: 24, marginRight: 5, marginLeft: 5 },
   upload: { height: 190, borderRadius: 20, borderWidth: 1.5, borderColor: "#c8bfb3", borderStyle: "dashed", alignItems: "center", justifyContent: "center", overflow: "hidden" },
   uploadText: { fontFamily: "AlbertSans_400Regular", color: colors.textSecondary },
   uploaded: { width: "100%", height: "100%" },
-  row: { marginTop: 12, flexDirection: "row", gap: 10, alignItems: "center" },
-  date: { backgroundColor: colors.card, borderRadius: 12, paddingVertical: 10, paddingHorizontal: 12 },
-  dateText: { fontFamily: "Inter_400Regular", color: colors.textPrimary },
+  row: { marginTop: 12, flexDirection: "row", gap: 10, alignItems: "center", marginLeft: 5},
+  dateCard: {
+    width: 80,
+    height: 92,
+    borderRadius: 16,
+    backgroundColor: colors.card,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  dateMonth: { fontFamily: "IMFellDWPicaSC_400Regular", color: colors.textSecondary },
+  dateDay: { fontFamily: "IMFellDWPicaSC_400Regular", fontSize: 38, color: colors.textPrimary, marginTop: -6 },
   mood: { width: 36, height: 36, borderRadius: 18, alignItems: "center", justifyContent: "center", backgroundColor: colors.card, borderColor: "transparent" },
-  mt: { marginTop: 12 },
+  mt: { marginTop: 12, marginLeft: 5 },
   flex: { flex: 1 },
-  section: { marginTop: 16, fontFamily: "AlbertSans_600SemiBold", color: colors.textPrimary, fontSize: 18 },
-  addRow: { marginTop: 8, alignSelf: "flex-start", backgroundColor: colors.card, paddingHorizontal: 10, paddingVertical: 8, borderRadius: 12 },
+  section: { marginTop: 16, fontFamily: "AlbertSans_600SemiBold", color: colors.textPrimary, fontSize: 18, marginLeft: 5},
+  addRow: { marginTop: 8, alignSelf: "flex-start", backgroundColor: colors.card, paddingHorizontal: 10, paddingVertical: 8, borderRadius: 12, marginLeft: 5 },
   addText: { fontFamily: "Inter_400Regular", color: colors.textPrimary },
-  collections: { marginTop: 8, flexDirection: "row", gap: 8, flexWrap: "wrap" },
-  bottom: { position: "absolute", left: 24, right: 24, bottom: 18 },
-  overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(246,243,238,0.95)", alignItems: "center", justifyContent: "center" },
-  congrats: { textAlign: "center", fontFamily: "IMFellDWPicaSC_400Regular", color: colors.textPrimary, fontSize: 38 }
+  collections: { marginTop: 8, flexDirection: "row", gap: 8, flexWrap: "wrap", paddingLeft: 5 },
+  bottom: { marginTop: 25, marginBottom: 32, alignSelf: "center" },
+  overlayWrap: { ...StyleSheet.absoluteFillObject, alignItems: "center", justifyContent: "center" },
+  overlay: {
+    width: "60%",
+    aspectRatio: 1,
+    borderRadius: 20,
+    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
+  congrats: { textAlign: "center", fontFamily: "IMFellDWPicaSC_400Regular", color: colors.textPrimary, fontSize: 22, lineHeight: 32 }
 });

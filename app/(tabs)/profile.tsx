@@ -1,5 +1,5 @@
-import { colors } from "@/lib/theme";
 import { mockUser } from "@/context/AppContext";
+import { colors } from "@/lib/theme";
 import React, { useState } from "react";
 import { Pressable, SafeAreaView, StyleSheet, Switch, Text, View } from "react-native";
 
@@ -54,8 +54,8 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#EDE1CC", paddingHorizontal: 24 },
-  title: { fontFamily: "IMFellDWPicaSC_400Regular", fontSize: 48, color: colors.textPrimary },
+  container: { flex: 1, backgroundColor: "#F6F3EE", marginRight: 5, marginLeft: 5},
+  title: { fontFamily: "IMFellDWPicaSC_400Regular", fontSize: 48, color: colors.textPrimary, marginTop: 20, paddingLeft: 5},
   avatarWrap: {
     width: 120,
     height: 120,
@@ -64,13 +64,13 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 16
+    marginTop: 16, marginLeft: 5, marginRight: 5
   },
   avatar: { fontSize: 54 },
   info: { textAlign: "center", marginTop: 14, color: colors.textSecondary, fontFamily: "AlbertSans_400Regular", fontSize: 16 },
-  settings: { marginTop: 30, color: colors.textSecondary, fontFamily: "AlbertSans_600SemiBold", fontSize: 12, letterSpacing: 1.6 },
-  row: { marginTop: 12, backgroundColor: colors.card, borderRadius: 16, padding: 14, flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  settings: { marginTop: 30, color: colors.textSecondary, fontFamily: "AlbertSans_600SemiBold", fontSize: 12, letterSpacing: 1.5, paddingLeft: 5 },
+  row: { marginTop: 12, backgroundColor: colors.card, borderRadius: 16, padding: 14, flexDirection: "row", justifyContent: "space-between", alignItems: "center"},
   rowLabel: { fontFamily: "AlbertSans_400Regular", color: colors.textPrimary, fontSize: 16 },
-  dropdown: { paddingHorizontal: 12, paddingVertical: 8, backgroundColor: colors.background, borderRadius: 12 },
+  dropdown: { paddingHorizontal: 12, paddingVertical: 5, backgroundColor: colors.background, borderRadius: 12 },
   dropdownText: { fontFamily: "Inter_400Regular", color: colors.textPrimary }
 });

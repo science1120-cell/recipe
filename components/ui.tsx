@@ -77,6 +77,6 @@ const styles = StyleSheet.create({
     color: colors.textPrimary
   },
   chipTextActive: {
-    fontWeight: "700"
+    fontFamily: "AlbertSans_600SemiBold"
   }
 });
