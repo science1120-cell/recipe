@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 
-const week = ["S", "M", "T", "W", "T", "F", "S"];
+const week = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const days = Array.from({ length: 31 }, (_, i) => i + 1);
 
 export default function HomeScreen() {
