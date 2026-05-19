@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { H1, Body, Input, PillButton, Screen } from '@/components/recipes-ui';
+import { Body, H1, Input, PillButton, Screen } from '@/components/recipes-ui';
 import { Colors, Fonts } from '@/constants/theme';
 import { useAuth } from '@/lib/auth';
 import { isSupabaseConfigured } from '@/lib/supabase';
@@ -44,9 +44,9 @@ export default function OnboardingScreen() {
           </View>
         )}
 
-        <View style={{ paddingTop: isSupabaseConfigured ? 72 : 16 }}>
+        <View style={{ paddingTop: isSupabaseConfigured ? 50 : 16 }}>
           <H1>Recipes Journal</H1>
-          {isSupabaseConfigured && (
+          {__DEV__ && !isSupabaseConfigured && (
             <Pressable onPress={enterDemoMode} style={({ pressed }) => [styles.previewLink, pressed && { opacity: 0.5 }]}>
               <Text style={styles.previewLinkText}>先預覽，不登入 →</Text>
             </Pressable>
@@ -56,7 +56,7 @@ export default function OnboardingScreen() {
             Hello there,
             {'\n\n'}Cooking takes effort.
             {'\n'}You did it great.
-            {'\n\n'}Take a breath, relax, and write down the recipe you just made- so you can recreate the delicious moment anytime.
+            {'\n\n'}Take a breath, relax, and write down the recipe you just made, so you can recreate the delicious moment anytime.
           </Body>
         </View>
 
@@ -82,7 +82,7 @@ export default function OnboardingScreen() {
           <PillButton
             title={submitting ? '...' : isSupabaseConfigured ? 'Get Started' : 'Preview App'}
             onPress={onGetStarted}
-            style={!canSubmit ? { opacity: 0.5 } : undefined}
+            style={{ ...styles.ctaButton, ...(!canSubmit ? { opacity: 0.5 } : {}) }}
           />
           {errorText ? (
             <>
@@ -101,14 +101,16 @@ export default function OnboardingScreen() {
 const styles = StyleSheet.create({
   form: {
     backgroundColor: 'transparent',
-    paddingBottom: 22,
+    width: '90%',
+    alignSelf: 'center',
+    paddingBottom: 28,
   },
   demoBanner: {
     backgroundColor: Colors.light.accent + '33',
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 10,
-    marginTop: 56,
+    marginTop: 50,
     marginBottom: 4,
   },
   demoBannerText: {
@@ -124,6 +126,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.light.muted,
     textDecorationLine: 'underline',
+  },
+  ctaButton: {
+    marginTop: 24,
+    alignSelf: 'center',
   },
 });
 

@@ -1,8 +1,10 @@
 import { PillButton } from "@/components/ui";
-import { mockUser, useAppStore } from "@/context/AppContext";
-import { colors } from "@/lib/theme";
+import { useAppStore } from "@/context/AppContext";
+import { useAppTheme, usePreferences } from "@/context/PreferencesContext";
+import { useAuth } from "@/lib/auth";
+import { getDisplayName } from "@/lib/userDisplay";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useMemo } from "react";
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 
 const WEEK = ["S", "M", "T", "W", "T", "F", "S"];
@@ -11,7 +13,87 @@ const ROW_GAP = 10;
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { user } = useAuth();
   const { recipes } = useAppStore();
+  const { colors, fonts } = useAppTheme();
+  const { scale } = usePreferences();
+  const displayName = getDisplayName(user);
+
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        fullBg: { flex: 1, backgroundColor: colors.background },
+        container: {
+          flex: 1,
+          backgroundColor: "transparent",
+          paddingHorizontal: 32,
+          paddingTop: 30,
+          justifyContent: "flex-start",
+        },
+        headerRow: { flexDirection: "row", gap: 20, alignItems: "center", marginTop: 30 },
+        dateCard: {
+          width: 80,
+          height: 92,
+          borderRadius: 16,
+          backgroundColor: colors.card,
+          alignItems: "center",
+          justifyContent: "center",
+        },
+        month: { fontFamily: fonts.serif, color: colors.textSecondary, fontSize: scale(14) },
+        day: {
+          fontFamily: fonts.serif,
+          fontSize: scale(38),
+          color: colors.textPrimary,
+          marginTop: -6,
+        },
+        greetingCol: { flex: 1 },
+        greetingName: {
+          fontFamily: fonts.sans,
+          color: colors.textPrimary,
+          fontSize: scale(20),
+          lineHeight: scale(28),
+        },
+        greetingQuestion: {
+          fontFamily: fonts.sans,
+          color: colors.textPrimary,
+          fontSize: scale(20),
+          lineHeight: scale(28),
+        },
+        buttonWrap: { marginTop: 10, alignSelf: "flex-end" },
+        calendar: { marginTop: 32, marginLeft: 5, marginRight: 5, backgroundColor: "transparent" },
+        row: { flexDirection: "row", gap: COL_GAP },
+        weekCell: {
+          flex: 1,
+          aspectRatio: 1,
+          backgroundColor: colors.chip,
+          borderRadius: 33,
+          alignItems: "center",
+          justifyContent: "center",
+        },
+        emptyCell: { flex: 1, aspectRatio: 1 },
+        weekText: {
+          fontFamily: fonts.serif,
+          fontSize: scale(13),
+          color: colors.textSecondary,
+        },
+        dayCircle: {
+          flex: 1,
+          aspectRatio: 1,
+          backgroundColor: colors.calendarDay,
+          borderRadius: 33,
+          alignItems: "center",
+          justifyContent: "center",
+        },
+        today: { backgroundColor: colors.primary },
+        dayText: {
+          fontFamily: fonts.serif,
+          fontSize: scale(18),
+          color: colors.textPrimary,
+        },
+        emoji: { position: "absolute", top: 2, right: 3, fontSize: scale(13) },
+      }),
+    [colors, fonts, scale]
+  );
   const now = new Date();
   const today = now.getDate();
   const month = now.toLocaleString("en", { month: "short" });
@@ -45,7 +127,7 @@ export default function HomeScreen() {
             <Text style={styles.day}>{today}</Text>
           </View>
           <View style={styles.greetingCol}>
-            <Text style={styles.greetingName}>Hello {mockUser.name} 👋</Text>
+            <Text style={styles.greetingName}>Hello {displayName} 👋</Text>
             <Text style={styles.greetingQuestion}>What do we have today?</Text>
             <View style={styles.buttonWrap}>
               <PillButton label="Add Recipe" onPress={() => router.push("/recipe/new/edit")} />
@@ -94,57 +176,3 @@ export default function HomeScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  fullBg: {
-    flex: 1,
-    backgroundColor: "#F6F3EE",
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "transparent",
-    paddingHorizontal: 32,
-    paddingTop: 30,
-    justifyContent: "flex-start",
-    marginRight: 5,
-    marginLeft: 5,
-  },
-  headerRow: { flexDirection: "row", gap: 20, alignItems: "center", marginTop: 30},
-  dateCard: {
-    width: 80,
-    height: 92,
-    borderRadius: 16,
-    backgroundColor: colors.card,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  month: { fontFamily: "IMFellDWPicaSC_400Regular", color: colors.textSecondary },
-  day: { fontFamily: "IMFellDWPicaSC_400Regular", fontSize: 38, color: colors.textPrimary, marginTop: -6 },
-  greetingCol: { flex: 1 },
-  greetingName: { fontFamily: "AlbertSans_400Regular", color: colors.textPrimary, fontSize: 20, lineHeight: 28 },
-  greetingQuestion: { fontFamily: "AlbertSans_400Regular", color: colors.textPrimary, fontSize: 20, lineHeight: 28 },
-  buttonWrap: { marginTop: 10, alignSelf: "flex-end" },
-  calendar: { marginTop: 32, marginLeft: 5, marginRight: 5, backgroundColor: "transparent"},
-  row: { flexDirection: "row", gap: COL_GAP },
-  weekCell: {
-    flex: 1,
-    aspectRatio: 1,
-    backgroundColor: "#E5E1DA",
-    borderRadius: 33,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  emptyCell: { flex: 1, aspectRatio: 1 },
-  weekText: { fontFamily: "IMFellDWPicaSC_400Regular", fontSize: 13, color: colors.textSecondary },
-  dayCircle: {
-    flex: 1,
-    aspectRatio: 1,
-    backgroundColor: "#CDDBE6",
-    borderRadius: 33,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  today: { backgroundColor: colors.primary },
-  dayText: { fontFamily: "IMFellDWPicaSC_400Regular", fontSize: 18, color: colors.textPrimary },
-  emoji: { position: "absolute", top: 2, right: 3, fontSize: 13 },
-});

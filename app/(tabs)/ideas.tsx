@@ -1,6 +1,6 @@
 import { Chip, PillButton } from "@/components/ui";
 import { useAppStore } from "@/context/AppContext";
-import { colors } from "@/lib/theme";
+import { useAppTheme, usePreferences } from "@/context/PreferencesContext";
 import { useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
 import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -11,6 +11,61 @@ const MAX_INGREDIENTS = 8;
 export default function IdeasScreen() {
   const router = useRouter();
   const { recipes } = useAppStore();
+  const { colors, fonts } = useAppTheme();
+  const { scale } = usePreferences();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        screenRoot: { flex: 1, backgroundColor: colors.background },
+        container: { flex: 1 },
+        title: {
+          fontFamily: fonts.serif,
+          fontSize: scale(44),
+          color: colors.textPrimary,
+          marginTop: 20,
+        },
+        subtitle: {
+          marginTop: 8,
+          fontFamily: fonts.sans,
+          color: colors.textSecondary,
+          fontSize: scale(15),
+        },
+        section: {
+          marginTop: 25,
+          fontFamily: fonts.sansBold,
+          color: colors.textPrimary,
+          fontSize: scale(18),
+        },
+        chips: { marginTop: 8, flexDirection: "row", flexWrap: "wrap", gap: 8 },
+        empty: {
+          marginTop: 8,
+          fontFamily: fonts.sans,
+          color: colors.textSecondary,
+          fontSize: scale(14),
+        },
+        result: {
+          flexDirection: "row",
+          gap: 12,
+          backgroundColor: colors.card,
+          borderRadius: 16,
+          alignItems: "center",
+          overflow: "hidden",
+        },
+        thumb: { width: 64, height: 64 },
+        thumbPlaceholder: { backgroundColor: colors.card },
+        resultName: {
+          fontFamily: fonts.sansBold,
+          color: colors.textPrimary,
+          fontSize: scale(16),
+        },
+        resultMeta: {
+          marginTop: 4,
+          fontFamily: fonts.meta,
+          color: colors.textSecondary,
+        },
+      }),
+    [colors, fonts, scale]
+  );
   const [time, setTime] = useState<string | null>(null);
   const [ings, setIngs] = useState<string[]>([]);
   const [show, setShow] = useState(false);
@@ -49,6 +104,7 @@ export default function IdeasScreen() {
     setIngs((prev) => (prev.includes(name) ? prev.filter((x) => x !== name) : [...prev, name]));
 
   return (
+    <View style={styles.screenRoot}>
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
         <Text style={styles.title}>Searching Ideas?</Text>
@@ -109,19 +165,6 @@ export default function IdeasScreen() {
         )}
       </ScrollView>
     </SafeAreaView>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F6F3EE", marginRight: 5, marginLeft: 5 },
-  title: { fontFamily: "IMFellDWPicaSC_400Regular", fontSize: 44, color: colors.textPrimary, marginTop: 20 },
-  subtitle: { marginTop: 8, fontFamily: "AlbertSans_400Regular", color: colors.textSecondary, fontSize: 15 },
-  section: { marginTop: 25, fontFamily: "AlbertSans_600SemiBold", color: colors.textPrimary, fontSize: 18 },
-  chips: { marginTop: 8, flexDirection: "row", flexWrap: "wrap", gap: 8 },
-  empty: { marginTop: 8, fontFamily: "AlbertSans_400Regular", color: colors.textSecondary, fontSize: 14 },
-  result: { flexDirection: "row", gap: 12, backgroundColor: colors.card, borderRadius: 16, alignItems: "center", overflow: "hidden" },
-  thumb: { width: 64, height: 64 },
-  thumbPlaceholder: { backgroundColor: colors.card },
-  resultName: { fontFamily: "AlbertSans_600SemiBold", color: colors.textPrimary, fontSize: 16 },
-  resultMeta: { marginTop: 4, fontFamily: "Inter_400Regular", color: colors.textSecondary },
-});

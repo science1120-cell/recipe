@@ -1,27 +1,94 @@
 import { Chip, PillButton } from "@/components/ui";
 import { useAppStore } from "@/context/AppContext";
-import { colors } from "@/lib/theme";
+import { useAppTheme, usePreferences } from "@/context/PreferencesContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React from "react";
+import React, { useMemo } from "react";
 import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function RecipeDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { getRecipe, favorites, toggleFavorite } = useAppStore();
+  const { colors, fonts } = useAppTheme();
+  const { scale } = usePreferences();
   const recipe = getRecipe(id);
   const isFavorite = recipe ? favorites.includes(recipe.id) : false;
 
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        screenRoot: { flex: 1, backgroundColor: colors.background },
+        container: { flex: 1 },
+        top: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+        back: { fontFamily: fonts.sansBold, color: colors.textPrimary, fontSize: scale(14) },
+        photo: { width: "100%", height: 250, borderRadius: 20, marginTop: 12 },
+        title: {
+          marginTop: 12,
+          fontFamily: fonts.serif,
+          fontSize: scale(44),
+          color: colors.textPrimary,
+        },
+        chips: { flexDirection: "row", gap: 8, flexWrap: "wrap", marginTop: 8 },
+        section: {
+          marginTop: 16,
+          fontFamily: fonts.sansBold,
+          color: colors.textPrimary,
+          fontSize: scale(19),
+        },
+        serving: { marginTop: 10, flexDirection: "row", justifyContent: "space-between" },
+        servingText: { fontFamily: fonts.sans, color: colors.textPrimary, fontSize: scale(16) },
+        ingredientRow: {
+          marginTop: 8,
+          paddingBottom: 8,
+          borderBottomColor: colors.chip,
+          borderBottomWidth: 1,
+          flexDirection: "row",
+          justifyContent: "space-between",
+        },
+        ing: { fontFamily: fonts.sans, color: colors.textPrimary, fontSize: scale(16) },
+        stepRow: { marginTop: 10, flexDirection: "row", gap: 10, alignItems: "flex-start" },
+        marker: {
+          width: 24,
+          height: 24,
+          borderRadius: 12,
+          backgroundColor: colors.stepMarker,
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: 2,
+        },
+        markerText: { color: colors.white, fontFamily: fonts.sansBold, fontSize: scale(12) },
+        stepText: {
+          flex: 1,
+          fontFamily: fonts.sans,
+          color: colors.textPrimary,
+          lineHeight: scale(22),
+          fontSize: scale(16),
+        },
+        edited: {
+          marginTop: 12,
+          fontFamily: fonts.meta,
+          color: colors.textSecondary,
+          fontStyle: "italic",
+          fontSize: scale(14),
+        },
+        bottom: { marginTop: 25, marginBottom: 32, alignSelf: "center" },
+      }),
+    [colors, fonts, scale]
+  );
+
   if (!recipe) {
     return (
-      <SafeAreaView style={styles.container}>
-        <Text style={{ fontFamily: "AlbertSans_400Regular", color: colors.textPrimary }}>Recipe not found.</Text>
-      </SafeAreaView>
+      <View style={styles.screenRoot}>
+        <SafeAreaView style={styles.container}>
+          <Text style={{ fontFamily: fonts.sans, color: colors.textPrimary }}>Recipe not found.</Text>
+        </SafeAreaView>
+      </View>
     );
   }
 
   return (
+    <View style={styles.screenRoot}>
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
         <View style={styles.top}>
@@ -62,25 +129,6 @@ export default function RecipeDetailScreen() {
         </View>
       </ScrollView>
     </SafeAreaView>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F6F3EE", marginLeft: 5, marginRight: 5 },
-  top: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  back: { fontFamily: "AlbertSans_600SemiBold", color: colors.textPrimary },
-  photo: { width: "100%", height: 250, borderRadius: 20, marginTop: 12 },
-  title: { marginTop: 12, fontFamily: "IMFellDWPicaSC_400Regular", fontSize: 44, color: colors.textPrimary },
-  chips: { flexDirection: "row", gap: 8, flexWrap: "wrap", marginTop: 8 },
-  section: { marginTop: 16, fontFamily: "AlbertSans_600SemiBold", color: colors.textPrimary, fontSize: 19 },
-  serving: { marginTop: 10, flexDirection: "row", justifyContent: "space-between" },
-  servingText: { fontFamily: "AlbertSans_400Regular", color: colors.textPrimary },
-  ingredientRow: { marginTop: 8, paddingBottom: 8, borderBottomColor: "#d5d0c7", borderBottomWidth: 1, flexDirection: "row", justifyContent: "space-between" },
-  ing: { fontFamily: "AlbertSans_400Regular", color: colors.textPrimary },
-  stepRow: { marginTop: 10, flexDirection: "row", gap: 10, alignItems: "flex-start" },
-  marker: { width: 24, height: 24, borderRadius: 12, backgroundColor: colors.stepMarker, alignItems: "center", justifyContent: "center", marginTop: 2 },
-  markerText: { color: colors.white, fontFamily: "Inter_600SemiBold" },
-  stepText: { flex: 1, fontFamily: "AlbertSans_400Regular", color: colors.textPrimary, lineHeight: 22 },
-  edited: { marginTop: 12, fontFamily: "Inter_400Regular", color: colors.textSecondary, fontStyle: "italic" },
-  bottom: { marginTop: 25, marginBottom: 32, alignSelf: "center" }
-});

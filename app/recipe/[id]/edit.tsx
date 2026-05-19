@@ -1,7 +1,7 @@
 import { Chip, PillButton, SoftInput } from "@/components/ui";
 import { useAppStore } from "@/context/AppContext";
+import { useAppTheme, usePreferences } from "@/context/PreferencesContext";
 import { BlurView } from "expo-blur";
-import { colors } from "@/lib/theme";
 import { CollectionTag, IngredientItem, MoodEmoji } from "@/lib/types";
 import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -27,6 +27,96 @@ export default function EditRecipeScreen() {
   const [saved, setSaved] = useState(false);
   const dateMonth = new Date().toLocaleString("en", { month: "short" });
   const dateDay = new Date().getDate();
+  const { colors, fonts, isDark } = useAppTheme();
+  const { scale } = usePreferences();
+
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        screenRoot: { flex: 1, backgroundColor: colors.background },
+        container: {
+          flex: 1,
+          paddingHorizontal: 24,
+        },
+        upload: {
+          height: 190,
+          borderRadius: 20,
+          borderWidth: 1.5,
+          borderColor: colors.textSecondary,
+          borderStyle: "dashed",
+          backgroundColor: colors.card,
+          alignItems: "center",
+          justifyContent: "center",
+          overflow: "hidden",
+        },
+        uploaded: { width: "100%", height: "100%" },
+        uploadText: { fontFamily: fonts.sans, color: colors.textSecondary, fontSize: scale(15) },
+        row: { marginTop: 12, flexDirection: "row", gap: 10, alignItems: "center", marginLeft: 5 },
+        dateCard: {
+          width: 80,
+          height: 92,
+          borderRadius: 16,
+          backgroundColor: colors.card,
+          alignItems: "center",
+          justifyContent: "center",
+        },
+        dateMonth: { fontFamily: fonts.serif, color: colors.textSecondary, fontSize: scale(14) },
+        dateDay: {
+          fontFamily: fonts.serif,
+          fontSize: scale(38),
+          color: colors.textPrimary,
+          marginTop: -6,
+        },
+        mood: {
+          width: 36,
+          height: 36,
+          borderRadius: 18,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: colors.card,
+          borderColor: "transparent",
+        },
+        mt: { marginTop: 12, marginLeft: 5 },
+        flex: { flex: 1 },
+        collections: { marginTop: 8, flexDirection: "row", gap: 8, flexWrap: "wrap", paddingLeft: 5 },
+        section: {
+          marginTop: 16,
+          fontFamily: fonts.sansBold,
+          color: colors.textPrimary,
+          fontSize: scale(18),
+          marginLeft: 5,
+        },
+        addRow: {
+          marginTop: 8,
+          alignSelf: "flex-start",
+          backgroundColor: colors.card,
+          paddingHorizontal: 10,
+          paddingVertical: 8,
+          borderRadius: 12,
+          marginLeft: 5,
+        },
+        addText: { fontFamily: fonts.meta, color: colors.textPrimary, fontSize: scale(15) },
+        bottom: { marginTop: 25, marginBottom: 32, alignSelf: "center" },
+        overlayWrap: { ...StyleSheet.absoluteFillObject, alignItems: "center", justifyContent: "center" },
+        overlay: {
+          width: "60%",
+          aspectRatio: 1,
+          borderRadius: 20,
+          overflow: "hidden",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 20,
+        },
+        congrats: {
+          textAlign: "center",
+          fontFamily: fonts.serif,
+          color: colors.textPrimary,
+          fontSize: scale(22),
+          lineHeight: scale(32),
+        },
+      }),
+    [colors, fonts, scale]
+  );
 
   const pick = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -39,6 +129,7 @@ export default function EditRecipeScreen() {
   };
 
   return (
+    <View style={styles.screenRoot}>
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
         <Pressable style={styles.upload} onPress={pick}>
@@ -118,48 +209,12 @@ export default function EditRecipeScreen() {
       </ScrollView>
       {saved && (
         <View style={styles.overlayWrap}>
-          <BlurView intensity={60} tint="light" style={styles.overlay}>
+          <BlurView intensity={60} tint={isDark ? "dark" : "light"} style={styles.overlay}>
             <Text style={styles.congrats}>CONGRATS 🎉{"\n"}YOUR RECIPE{"\n"}HAS BEEN SAVED.</Text>
           </BlurView>
         </View>
       )}
     </SafeAreaView>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F6F3EE", paddingHorizontal: 24, marginRight: 5, marginLeft: 5 },
-  upload: { height: 190, borderRadius: 20, borderWidth: 1.5, borderColor: "#c8bfb3", borderStyle: "dashed", alignItems: "center", justifyContent: "center", overflow: "hidden" },
-  uploadText: { fontFamily: "AlbertSans_400Regular", color: colors.textSecondary },
-  uploaded: { width: "100%", height: "100%" },
-  row: { marginTop: 12, flexDirection: "row", gap: 10, alignItems: "center", marginLeft: 5},
-  dateCard: {
-    width: 80,
-    height: 92,
-    borderRadius: 16,
-    backgroundColor: colors.card,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  dateMonth: { fontFamily: "IMFellDWPicaSC_400Regular", color: colors.textSecondary },
-  dateDay: { fontFamily: "IMFellDWPicaSC_400Regular", fontSize: 38, color: colors.textPrimary, marginTop: -6 },
-  mood: { width: 36, height: 36, borderRadius: 18, alignItems: "center", justifyContent: "center", backgroundColor: colors.card, borderColor: "transparent" },
-  mt: { marginTop: 12, marginLeft: 5 },
-  flex: { flex: 1 },
-  section: { marginTop: 16, fontFamily: "AlbertSans_600SemiBold", color: colors.textPrimary, fontSize: 18, marginLeft: 5},
-  addRow: { marginTop: 8, alignSelf: "flex-start", backgroundColor: colors.card, paddingHorizontal: 10, paddingVertical: 8, borderRadius: 12, marginLeft: 5 },
-  addText: { fontFamily: "Inter_400Regular", color: colors.textPrimary },
-  collections: { marginTop: 8, flexDirection: "row", gap: 8, flexWrap: "wrap", paddingLeft: 5 },
-  bottom: { marginTop: 25, marginBottom: 32, alignSelf: "center" },
-  overlayWrap: { ...StyleSheet.absoluteFillObject, alignItems: "center", justifyContent: "center" },
-  overlay: {
-    width: "60%",
-    aspectRatio: 1,
-    borderRadius: 20,
-    overflow: "hidden",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
-  congrats: { textAlign: "center", fontFamily: "IMFellDWPicaSC_400Regular", color: colors.textPrimary, fontSize: 22, lineHeight: 32 }
-});

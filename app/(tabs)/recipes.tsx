@@ -1,6 +1,6 @@
 import { Chip, SoftInput } from "@/components/ui";
 import { useAppStore } from "@/context/AppContext";
-import { colors } from "@/lib/theme";
+import { useAppTheme, usePreferences } from "@/context/PreferencesContext";
 import { CollectionTag } from "@/lib/types";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -12,6 +12,69 @@ const collections: CollectionTag[] = ["All", "Desserts", "Lunchbox", "Midnight s
 export default function RecipesScreen() {
   const router = useRouter();
   const { recipes } = useAppStore();
+  const { colors, fonts } = useAppTheme();
+  const { scale } = usePreferences();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        screenRoot: { flex: 1, backgroundColor: colors.background },
+        container: {
+          flex: 1,
+          paddingHorizontal: 24,
+        },
+        title: {
+          fontFamily: fonts.serif,
+          fontSize: scale(48),
+          color: colors.textPrimary,
+          marginTop: 20,
+        },
+        subtitle: {
+          fontFamily: fonts.meta,
+          color: colors.textSecondary,
+          fontSize: scale(15),
+          marginLeft: 5,
+        },
+        searchWrap: {
+          marginTop: 12,
+          flexDirection: "row",
+          backgroundColor: colors.card,
+          borderRadius: 12,
+          alignItems: "center",
+          paddingLeft: 10,
+        },
+        search: { paddingLeft: 5, marginRight: 30, backgroundColor: "transparent" },
+        grid: {
+          paddingVertical: 16,
+          gap: 12,
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+        },
+        card: {
+          width: "48%",
+          backgroundColor: colors.card,
+          borderRadius: 20,
+          paddingBottom: 10,
+          overflow: "hidden",
+        },
+        photo: { width: "100%", aspectRatio: 1 },
+        recipeName: {
+          marginTop: 8,
+          marginHorizontal: 10,
+          fontFamily: fonts.sansBold,
+          color: colors.textPrimary,
+          fontSize: scale(16),
+        },
+        meta: {
+          marginTop: 4,
+          marginHorizontal: 10,
+          fontFamily: fonts.meta,
+          color: colors.textSecondary,
+          fontSize: scale(12),
+        },
+      }),
+    [colors, fonts, scale]
+  );
   const [search, setSearch] = useState("");
   const [active, setActive] = useState<CollectionTag>("All");
   const filtered = useMemo(
@@ -25,6 +88,7 @@ export default function RecipesScreen() {
   );
 
   return (
+    <View style={styles.screenRoot}>
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Recipes</Text>
       <Text style={styles.subtitle}>{recipes.length} recipes</Text>
@@ -47,18 +111,6 @@ export default function RecipesScreen() {
         ))}
       </ScrollView>
     </SafeAreaView>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F6F3EE", paddingHorizontal: 24, marginRight: 5, marginLeft: 5},
-  title: { fontFamily: "IMFellDWPicaSC_400Regular", fontSize: 48, color: colors.textPrimary, marginTop: 20},
-  subtitle: { fontFamily: "Inter_400Regular", color: colors.textSecondary, fontSize: 15, marginLeft: 5},
-  searchWrap: { marginTop: 12, flexDirection: "row", backgroundColor: colors.card, borderRadius: 12, alignItems: "center", paddingLeft: 10},
-  search: {paddingLeft: 5,marginRight: 30, backgroundColor: "transparent"},
-  grid: { paddingVertical: 16, gap: 12, flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" },
-  card: { width: "48%", backgroundColor: colors.card, borderRadius: 20, paddingBottom: 10, overflow: "hidden"},
-  photo: { width: "100%", aspectRatio: 1 },
-  recipeName: { marginTop: 8, marginHorizontal: 10, fontFamily: "AlbertSans_600SemiBold", color: colors.textPrimary },
-  meta: { marginTop: 4, marginHorizontal: 10, fontFamily: "Inter_400Regular", color: colors.textSecondary, fontSize: 12 }
-});

@@ -146,4 +146,3 @@ export function useAppStore() {
   return context;
 }
 
-export { mockUser };

@@ -4,9 +4,15 @@
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
+    "postinstall": "node scripts/fix-async-storage-pod.js",
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
+    "ios:device": "expo run:ios --device",
+    "ios:release": "expo run:ios --device --configuration Release",
+    "ios:standalone": "expo run:ios --device --configuration Release",
+    "android:device": "expo run:android --device",
+    "prebuild": "expo prebuild",
     "web": "expo start --web",
     "lint": "expo lint"
   },

@@ -1,6 +1,6 @@
 import { SoftInput } from "@/components/ui";
 import { useAppStore } from "@/context/AppContext";
-import { colors } from "@/lib/theme";
+import { useAppTheme, usePreferences } from "@/context/PreferencesContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
@@ -9,6 +9,67 @@ import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } fr
 export default function FavoritesScreen() {
   const router = useRouter();
   const { recipes, favorites } = useAppStore();
+  const { colors, fonts } = useAppTheme();
+  const { scale } = usePreferences();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        screenRoot: { flex: 1, backgroundColor: colors.background },
+        container: { flex: 1 },
+        title: {
+          fontFamily: fonts.serif,
+          fontSize: scale(48),
+          color: colors.textPrimary,
+          marginTop: 20,
+        },
+        subtitle: {
+          fontFamily: fonts.meta,
+          color: colors.textSecondary,
+          fontSize: scale(15),
+          paddingLeft: 5,
+        },
+        searchWrap: {
+          marginTop: 12,
+          flexDirection: "row",
+          backgroundColor: colors.card,
+          borderRadius: 12,
+          alignItems: "center",
+          paddingLeft: 10,
+        },
+        search: { flex: 1, backgroundColor: "transparent", paddingLeft: 10 },
+        grid: {
+          paddingVertical: 16,
+          gap: 12,
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+        },
+        card: {
+          width: "48%",
+          backgroundColor: colors.card,
+          borderRadius: 20,
+          paddingBottom: 12,
+          overflow: "hidden",
+        },
+        photo: { width: "100%", aspectRatio: 1 },
+        heart: { position: "absolute", top: 8, right: 8 },
+        recipeName: {
+          marginTop: 8,
+          marginHorizontal: 10,
+          fontFamily: fonts.sansBold,
+          color: colors.textPrimary,
+          fontSize: scale(16),
+        },
+        meta: {
+          marginTop: 4,
+          marginHorizontal: 10,
+          fontFamily: fonts.meta,
+          color: colors.textSecondary,
+          fontSize: scale(12),
+        },
+      }),
+    [colors, fonts, scale]
+  );
   const [search, setSearch] = useState("");
   const list = useMemo(
     () =>
@@ -17,6 +78,7 @@ export default function FavoritesScreen() {
   );
 
   return (
+    <View style={styles.screenRoot}>
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Favorites</Text>
       <Text style={styles.subtitle}>{list.length} saved</Text>
@@ -37,19 +99,6 @@ export default function FavoritesScreen() {
         ))}
       </ScrollView>
     </SafeAreaView>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F6F3EE", marginRight: 5, marginLeft: 5},
-  title: { fontFamily: "IMFellDWPicaSC_400Regular", fontSize: 48, color: colors.textPrimary, marginTop: 20},
-  subtitle: { fontFamily: "Inter_400Regular", color: colors.textSecondary, fontSize: 15, paddingLeft: 5},
-  searchWrap: { marginTop: 12, flexDirection: "row", backgroundColor: colors.card, borderRadius: 12, alignItems: "center", paddingLeft: 10},
-  search: { flex: 1, backgroundColor: "transparent", paddingLeft: 10},
-  grid: { paddingVertical: 16, gap: 12, flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" },
-  card: { width: "48%", backgroundColor: colors.card, borderRadius: 20, paddingBottom: 12, overflow: "hidden" },
-  photo: { width: "100%", aspectRatio: 1 },
-  heart: { position: "absolute", top: 8, right: 8 },
-  recipeName: { marginTop: 8, marginHorizontal: 10, fontFamily: "AlbertSans_600SemiBold", color: colors.textPrimary },
-  meta: { marginTop: 4, marginHorizontal: 10, fontFamily: "Inter_400Regular", color: colors.textSecondary, fontSize: 12 }
-});

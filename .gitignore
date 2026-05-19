@@ -4,3 +4,12 @@
 
 expo-env.d.ts
 # @end expo-cli
+
+.env
+.env.local
+.env.*.local
+
+# Native build artifacts (regenerate with `npm run prebuild`)
+ios/Pods/
+android/.gradle/
+android/app/build/

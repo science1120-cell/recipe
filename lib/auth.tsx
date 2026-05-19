@@ -20,6 +20,7 @@ type AuthContextValue = {
   loading: boolean;
   isDemoMode: boolean;
   signInOrSignUpWithEmail: (email: string, password: string) => Promise<void>;
+  updateDisplayName: (name: string) => Promise<void>;
   enterDemoMode: () => void;
   signOut: () => Promise<void>;
 };
@@ -75,8 +76,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const signIn = await supabase.auth.signInWithPassword({ email: _email, password: _password });
         if (!signIn.error) return;
 
-        const signUp = await supabase.auth.signUp({ email: _email, password: _password });
+        const localPart = _email.split("@")[0] ?? "Chef";
+        const displayName = localPart.charAt(0).toUpperCase() + localPart.slice(1);
+        const signUp = await supabase.auth.signUp({
+          email: _email,
+          password: _password,
+          options: { data: { full_name: displayName } },
+        });
         if (signUp.error) throw signUp.error;
+      },
+      async updateDisplayName(name: string) {
+        const trimmed = name.trim();
+        if (!trimmed) throw new Error("Nickname cannot be empty.");
+        if (isDemoMode) {
+          throw new Error("Sign in to save your nickname.");
+        }
+        if (!isSupabaseConfigured || !supabase) {
+          throw new Error("Account is not available.");
+        }
+        const { data, error } = await supabase.auth.updateUser({
+          data: { full_name: trimmed },
+        });
+        if (error) throw error;
+        if (data.user) {
+          setSession((prev) =>
+            prev ? { ...prev, user: data.user! } : null
+          );
+        }
       },
       enterDemoMode() {
         setIsDemoMode(true);
